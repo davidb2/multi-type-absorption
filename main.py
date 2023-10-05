@@ -130,7 +130,8 @@ def number_of_partitions(n):
 
 import copy
 def birth_event(S, u, v):
-  assert u != v
+  if u == v:
+    return S
   uloc = None
   vloc = None
   for loc, group in enumerate(S):
@@ -164,7 +165,7 @@ def absorption_time(G: nx.Graph):
     for u in G.nodes():
       for (_, v) in G.edges(u):
         T = birth_event(S, u, v)
-        A[idx, S_to_idx[T]] += -(1/N) * (1/G.degree(u))
+        A[idx, S_to_idx[T]] += -(1/N) * (1/len(G.edges(u)))  # G.degree(u) seems to count self-loops twice
         b[idx] = 1
 
   t = np.linalg.solve(A, b)
@@ -202,13 +203,39 @@ def samples_info(G: nx.Graph):
 
 def get_exact(G: nx.Graph):
   N = len(G)
-  is_complete = len(G.edges()) == N*(N-1)//2
+  is_complete = all(G.has_edge(u, v) for u in G.nodes() for v in G.nodes() if u != v)
   at = absorption_time(G)[0]
   print(f"{at} {'<-- complete' if is_complete else ''}")
 
 def main(args):
   DRAW_GRAPH = False
   N = args.n
+
+  print("Complete graph:")
+  G = nx.complete_graph(N)
+  get_exact(G)
+  print("-"*50)
+
+  print("Complete graph with self-loops:")
+  G = nx.complete_graph(N)
+  for i in range(N):
+    G.add_edge(i, i)
+  get_exact(G)
+  print("-"*50)
+
+  print("Cycle graph:")
+  G = nx.cycle_graph(N)
+  get_exact(G)
+  print("-"*50)
+
+  print("Cycle graph with self-loops:")
+  G = nx.cycle_graph(N)
+  for i in range(N):
+    G.add_edge(i, i)
+  get_exact(G)
+  print("-"*50)
+
+  print("Rest of the graphs:")
   for G in yield_all_graph6(Path(f"data/connected-n{N}.g6")):
     if DRAW_GRAPH:
       nx.draw(G)
@@ -216,7 +243,6 @@ def main(args):
 
     # get_samples(G)
     get_exact(G)
-
 
 def parse_args():
   parser = argparse.ArgumentParser(description="compute expected number of steps until absorption in multi-type Moran process on an undirected graph.")
