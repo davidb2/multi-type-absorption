@@ -44,16 +44,16 @@ def samples_info(G: nx.Graph, times: int = NUM_SIMULATIONS):
 
 
 GRAPH_GENERATORS = [
-  # GraphGenerator(barbell_graph, 'barbell'),
-  GraphGenerator(nx.complete_graph, 'complete'),
+  GraphGenerator(barbell_graph, 'barbell'),
+  # GraphGenerator(nx.complete_graph, 'complete'),
   # GraphGenerator(complete_bipartite_graph, 'complete bipartite'),
-  GraphGenerator(nx.cycle_graph, 'cycle'),
-  GraphGenerator(conjoined_star_graph, 'double star'),
+  # GraphGenerator(nx.cycle_graph, 'cycle'),
+  # GraphGenerator(conjoined_star_graph, 'double star'),
   # GraphGenerator(double_leaved_star, 'double-leaved star'),
-  GraphGenerator(nx.path_graph, 'path'),
+  # GraphGenerator(nx.path_graph, 'path'),
   # GraphGenerator(perfect_binary_tree, 'perfect binary tree'),
   # GraphGenerator(square_periodic_grid, 'square periodic grid'),
-  GraphGenerator(star_graph, 'star'),
+  # GraphGenerator(star_graph, 'star'),
   # GraphGenerator(multi_column_graph_2, 'multi column graph 2'),
   # GraphGenerator(multi_column_graph_3, 'multi column graph 3'),
   # GraphGenerator(multi_column_graph_4, 'multi column graph 4'),

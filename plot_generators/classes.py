@@ -194,9 +194,12 @@ class GraphGenerator:
 def star_graph(n): return nx.star_graph(n-1)
 def complete_bipartite_graph(n): return nx.complete_bipartite_graph(n//2+(n%2), n//2)
 def barbell_graph(n):
-  if n % 2 == 1: return None
+  # if n % 2 == 1: return None
   if n // 2 <= 2: return nx.path_graph(n)
-  return nx.barbell_graph(n//2, 0)
+
+  m1 = n//3
+  m2 = n-2*m1
+  return nx.barbell_graph(m1, m2)
 
 def perfect_kary_tree(n, k): return nx.balanced_tree(k, int(h)) if np.isclose(h := np.emath.logn(k, n*(k-1)+1)-1, np.round(h)) else None
 def perfect_binary_tree(n): return perfect_kary_tree(n, 2)

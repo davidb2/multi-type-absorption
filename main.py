@@ -164,13 +164,10 @@ def main5(args):
 from plot_generators.classes import *
 def main6(args):
   n = args.n
-  G = conjoined_star_graph(n) # nx.star_graph(n)
-  print(G.nodes())
-  print(G.edges())
-  input()
+  G = barbell_graph(n) # conjoined_star_graph(n) # nx.star_graph(n)
   S = None # (tuple(range(n-1)), (n-1,),) + ()*(n-2) if n > 1 else ((0,),)
   # k = 1 # n-1
-  abs_time = get_exact(G, S, full=True)[(tuple(range(0, n // 2)), tuple(range(n//2, n)))]
+  abs_time = get_exact(G, S, bd=False) #, full=True)[(tuple(range(0, n // 2)), tuple(range(n//2, n)))]
   print(abs_time)
   # print('guess', (n**3+9*n**2+8*n-24)/6 + H(n))
 

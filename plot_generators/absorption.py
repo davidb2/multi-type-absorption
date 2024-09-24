@@ -141,7 +141,7 @@ def _dB_trial_absorption_time(G: nx.Graph, *, max_steps: Optional[int], interact
     initial_types.append(idx)
 
   assert len(initial_types) == len(G)
-  random.shuffle(initial_types)
+  # random.shuffle(initial_types)
 
   # Map of type -> locations.
   S: DefaultDict[int, Set[Any]] = defaultdict(set)
@@ -291,20 +291,21 @@ def absorption_time(G: nx.Graph, SS=None, full=False, bd=True):
     return (t[idx],)
 
 from sympy import *
-def absorption_time_frac(G: nx.Graph, SS=None, full=False):
+def absorption_time_frac(G: nx.Graph, SS=None, full=False, bd=True):
   """No self loops allowed."""
   N = len(G)
   B = number_of_partitions(N)
   A = np.zeros((B, B), dtype=Fraction)
   b = np.zeros((B,), dtype=Fraction)
   S_to_idx = {rec_sort(S): idx for idx, S in enumerate(partitions(tuple(G.nodes())))}
+  normalize = (lambda u,_: Fraction(1,G.degree(u))) if bd else (lambda _,v: Fraction(1,G.degree(v)))
   for S, idx in S_to_idx.items():
     A[idx, idx] = Fraction(1)
     if len(S) == 1: continue
     for u in G.nodes():
       for (_, v) in G.edges(u):
         T = birth_event(S, u, v)
-        A[idx, S_to_idx[T]] += Fraction(-1, N) * Fraction(1, G.degree(u))
+        A[idx, S_to_idx[T]] += Fraction(-1, N) * normalize(u, v) # Fraction(1, G.degree(u))
     b[idx] = Fraction(1)
 
   Asp = Matrix(A)
@@ -324,5 +325,5 @@ def absorption_time_frac(G: nx.Graph, SS=None, full=False):
 def get_exact(G: nx.Graph, S=None, full=False, bd=True):
   assert all(type(x) is int for x in G.nodes())
   N = len(G)
-  at = absorption_time(G, S, full=full, bd=bd)
+  at = absorption_time_frac(G, S, full=full, bd=bd)
   return at if full else at[-1]
